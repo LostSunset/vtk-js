@@ -24,6 +24,11 @@ import {
 } from 'vtk.js/Sources/Rendering/Core/VolumeProperty/Constants';
 import { BlendMode } from 'vtk.js/Sources/Rendering/Core/VolumeMapper/Constants';
 
+import {
+  getTransferFunctionHash,
+  getImageDataHash,
+} from 'vtk.js/Sources/Rendering/OpenGL/RenderWindow/resourceSharingHelper';
+
 import vtkVolumeVS from 'vtk.js/Sources/Rendering/OpenGL/glsl/vtkVolumeVS.glsl';
 import vtkVolumeFS from 'vtk.js/Sources/Rendering/OpenGL/glsl/vtkVolumeFS.glsl';
 
@@ -34,10 +39,6 @@ const { vtkWarningMacro, vtkErrorMacro } = macro;
 // ----------------------------------------------------------------------------
 // helper methods
 // ----------------------------------------------------------------------------
-
-function computeFnToString(pwfun, useIComps, numberOfComponents) {
-  return pwfun ? `${pwfun.getMTime()}-${useIComps}-${numberOfComponents}` : '0';
-}
 
 function getColorCodeFromPreset(colorMixPreset) {
   switch (colorMixPreset) {
@@ -705,34 +706,38 @@ function vtkOpenGLVolumeMapper(publicAPI, model) {
     const volInfo = model.scalarTexture.getVolumeInfo();
     const ipScalarRange = model.renderable.getIpScalarRange();
 
-    const minVals = [];
-    const maxVals = [];
-    for (let i = 0; i < 4; i++) {
-      // convert iprange from 0-1 into data range values
-      minVals[i] =
-        ipScalarRange[0] * volInfo.dataComputedScale[i] +
-        volInfo.dataComputedOffset[i];
-      maxVals[i] =
-        ipScalarRange[1] * volInfo.dataComputedScale[i] +
-        volInfo.dataComputedOffset[i];
-      // convert data ranges into texture values
-      minVals[i] = (minVals[i] - volInfo.offset[i]) / volInfo.scale[i];
-      maxVals[i] = (maxVals[i] - volInfo.offset[i]) / volInfo.scale[i];
+    // In some situations, we might not have computed the scale and offset
+    // for the data range, or it might not be needed.
+    if (volInfo?.dataComputedScale?.length) {
+      const minVals = [];
+      const maxVals = [];
+      for (let i = 0; i < 4; i++) {
+        // convert iprange from 0-1 into data range values
+        minVals[i] =
+          ipScalarRange[0] * volInfo.dataComputedScale[i] +
+          volInfo.dataComputedOffset[i];
+        maxVals[i] =
+          ipScalarRange[1] * volInfo.dataComputedScale[i] +
+          volInfo.dataComputedOffset[i];
+        // convert data ranges into texture values
+        minVals[i] = (minVals[i] - volInfo.offset[i]) / volInfo.scale[i];
+        maxVals[i] = (maxVals[i] - volInfo.offset[i]) / volInfo.scale[i];
+      }
+      program.setUniform4f(
+        'ipScalarRangeMin',
+        minVals[0],
+        minVals[1],
+        minVals[2],
+        minVals[3]
+      );
+      program.setUniform4f(
+        'ipScalarRangeMax',
+        maxVals[0],
+        maxVals[1],
+        maxVals[2],
+        maxVals[3]
+      );
     }
-    program.setUniform4f(
-      'ipScalarRangeMin',
-      minVals[0],
-      minVals[1],
-      minVals[2],
-      minVals[3]
-    );
-    program.setUniform4f(
-      'ipScalarRangeMax',
-      maxVals[0],
-      maxVals[1],
-      maxVals[2],
-      maxVals[3]
-    );
 
     // if we have a zbuffer texture then set it
     if (model.zBufferTexture !== null) {
@@ -1555,7 +1560,7 @@ function vtkOpenGLVolumeMapper(publicAPI, model) {
     const scalarOpacityFunc = vprop.getScalarOpacity();
     const opTex =
       model._openGLRenderWindow.getGraphicsResourceForObject(scalarOpacityFunc);
-    let toString = computeFnToString(
+    let toString = getTransferFunctionHash(
       scalarOpacityFunc,
       useIndependentComps,
       numIComps
@@ -1643,7 +1648,7 @@ function vtkOpenGLVolumeMapper(publicAPI, model) {
 
     // rebuild color tfun?
     const colorTransferFunc = vprop.getRGBTransferFunction();
-    toString = computeFnToString(
+    toString = getTransferFunctionHash(
       colorTransferFunc,
       useIndependentComps,
       numIComps
@@ -1706,7 +1711,7 @@ function vtkOpenGLVolumeMapper(publicAPI, model) {
 
     const tex = model._openGLRenderWindow.getGraphicsResourceForObject(scalars);
     // rebuild the scalarTexture if the data has changed
-    toString = `${image.getMTime()}A${scalars.getMTime()}`;
+    toString = getImageDataHash(image, scalars);
     const reBuildTex = !tex?.oglObject?.getHandle() || tex?.hash !== toString;
     if (reBuildTex) {
       model.scalarTexture = vtkOpenGLTexture.newInstance();
