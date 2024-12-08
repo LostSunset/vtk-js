@@ -173,7 +173,8 @@ This will allow you to see the some live code running in your browser. Just pick
 [![PLYWriter Example][PLYWriterWithIcon]](./PLYWriter.html "PLY writer(ply)")
 [![STLReader Example][STLReaderWithIcon]](./STLReader.html "STL reader(stl)")
 [![STLWriter Example][STLWriterWithIcon]](./STLWriter.html "STL writer(stl)")
-[![GLTFImporter Example][GLTFImporter]](./GLTFImporter.html "GLTF importer(gltf, glb)")
+[![GLTFImporter Example][GLTFImporterWithIcon]](./GLTFImporter.html "GLTF importer(gltf, glb)")
+[![IFCImporter Example][IFCImporterWithIcon]](./IFCImporter.html "IFC importer(ifc)")
 [![PolyDataReader Example][PolyDataReaderWithIcon]](./PolyDataReader.html "VTK legacy reader(VTK)")
 [![ElevationReader Example][ElevationReaderWithIcon]](./ElevationReader.html "Elevation reader(CSV, JPG)")
 [![OBJReader Example][OBJReaderWithIcon]](./OBJReader.html "OBJ reader(OBJ, MTL, JPG)")
@@ -187,7 +188,8 @@ This will allow you to see the some live code running in your browser. Just pick
 [![OfflineLocalView Example][OfflineLocalViewWithIcon]](./OfflineLocalView.html "Load a serialized scene (VTKSZ)")
 [![G-Code Example][GCodeReaderWithIcon]](./GCodeReader.html "G-Code reader(gcode)")
 [![HDRReader Example][HDRReaderWithIcon]](./HDRReader.html "Load an HDR image")
-[![TGAReader Example][TGAReaderWithIcon]](./TGAReader.html "Load an TGA image")
+[![TGAReader Example][TGAReaderWithIcon]](./TGAReader.html "Load a TGA image")
+[![TIFFReader Example][TIFFReaderWithIcon]](./TGAReader.html "Load a TIFF image")
 
 </div>
 
@@ -196,7 +198,8 @@ This will allow you to see the some live code running in your browser. Just pick
 [PLYWriterWithIcon]: ../docs/gallery/PLYWriterWithIcon.jpg
 [STLReaderWithIcon]: ../docs/gallery/STLReaderWithIcon.jpg
 [STLWriterWithIcon]: ../docs/gallery/STLWriterWithIcon.jpg
-[GLTFImporter]: ../docs/gallery/GLTFImporterWithIcon.jpg
+[GLTFImporterWithIcon]: ../docs/gallery/GLTFImporterWithIcon.jpg
+[IFCImporterWithIcon]: ../docs/gallery/IFCImporterWithIcon.jpg
 [PolyDataReaderWithIcon]: ../docs/gallery/VTKReaderWithIcon.jpg
 [ElevationReaderWithIcon]: ../docs/gallery/ElevationReaderWithIcon.jpg
 [OBJReaderWithIcon]: ../docs/gallery/OBJReaderWithIcon.jpg
@@ -211,6 +214,7 @@ This will allow you to see the some live code running in your browser. Just pick
 [GCodeReaderWithIcon]: ../docs/gallery/GCodeReaderWithIcon.jpg
 [HDRReaderWithIcon]: ../docs/gallery/HDRReaderWithIcon.jpg
 [TGAReaderWithIcon]: ../docs/gallery/TGAReaderWithIcon.jpg
+[TIFFReaderWithIcon]: ../docs/gallery/TIFFReaderWithIcon.jpg
 
 # Actors
 
